@@ -1,16 +1,16 @@
 <?php 
+session_start();
 $page_title = 'All Employee';
 $css_file = 'style.css';
-include_once('./includes/template/header.php');
-require_once('./connect_db.php');
 
-global $con;
+if(isset($_SESSION['name'])){
 
-$stmt = $con->prepare('SELECT * FROM employees');
-$stmt->execute();
-$employees = $stmt->fetchAll();
+require_once("./init.php");
+$employees = get_all_data('employees');
 
 ?>
+
+<h1>Hello <?php echo $_SESSION['name'] ?></h1>
 
 <table class="table">
   <thead>
@@ -20,6 +20,7 @@ $employees = $stmt->fetchAll();
       <th scope="col">Email</th>
       <th scope="col">Phone</th>
       <th scope="col">Department</th>
+      <th scope="col">Update</th>
       <th scope="col">Delete</th>
     </tr>
   </thead>
@@ -32,6 +33,7 @@ $employees = $stmt->fetchAll();
       <td><?php echo $employee['email']?></td>
       <td><?php echo $employee['phone']?></td>
       <td><?php echo $employee['dep']?></td>
+      <td><a class="btn btn-success" href="edit.php?emp_id=<?php echo $employee['id']?>">Update</a></td>
       <td><a class="btn btn-danger" href="delete.php?emp_id=<?php echo $employee['id']?>">Delete</a></td>
     </tr>
     <?php } ?>
@@ -41,8 +43,13 @@ $employees = $stmt->fetchAll();
 
 
 <a href="add_employee.php">Add Employee</a>
+<a href="logout.php">logout</a>
 
 
 <?php 
 include_once('./includes/template/footer.php');
+
+}else{
+  header('location:signin.php');
+}
 ?>

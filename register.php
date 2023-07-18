@@ -1,20 +1,20 @@
 <?php 
-session_start();
-$page_title = "Add EMployee";
+$page_title = "Register";
 $css_file = 'style.css';
-
-if(isset($_SESSION['name'])){
-
 require_once("./init.php");
-
 
 if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "POST"){
     $name   = filter_var($_POST['name'],FILTER_SANITIZE_STRING);
     $email  = filter_var($_POST['email'],FILTER_SANITIZE_EMAIL);
-    $phone  = filter_var($_POST['phone'],FILTER_SANITIZE_NUMBER_INT);
-    $dep    = filter_var($_POST['dep'],FILTER_SANITIZE_STRING);
+    $password  = filter_var($_POST['password'],FILTER_SANITIZE_STRING);
 
-    add_employee($name,$email,$phone,$dep);
+    // first way to hash password
+    // $hased_password = sha1($password);
+
+    //second way to hash password
+    $hased_password = password_hash($password,PASSWORD_DEFAULT);
+
+    register($name,$email,$hased_password);
   }
 
 ?>
@@ -33,24 +33,14 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "POST"){
   </div>
 
   <div class="mb-3">
-    <label class="form-label">phone</label>
-    <input type="tel" name="phone" class="form-control">
+    <label class="form-label">Password</label>
+    <input type="password" name="password" class="form-control">
   </div>
 
-  <div class="mb-3">
-    <label class="form-label">department</label>
-    <input type="text" name="dep" class="form-control">
-  </div>
  
   <button type="submit" class="btn btn-primary">Submit</button>
 </div>
 </form>
 
-<?php 
-
-include_once("./includes/template/footer.php");
-
-}else{
-  header('location:signin.php');
-}
+<?php include_once("./includes/template/footer.php");
  ?>
