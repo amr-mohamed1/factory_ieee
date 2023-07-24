@@ -86,14 +86,14 @@ function get_emp_with_id($table,$id){
 ============= delete employee with id ========
 ===============================================
 */
-function delete_with_id($table,$id){
+function delete_with_id($table,$id,$path){
     global $con;
     $stmt = $con->prepare("DELETE FROM $table WHERE id=?");
     $stmt->execute(array($id));
 
     save_operation($table,'Delete');
 
-    header('location:index.php');
+    header('location:'.$path);
 }
 
 
@@ -157,4 +157,45 @@ function login($email,$passwrd){
 
     save_operation('users','Login');
 
+}
+
+
+
+
+
+
+
+/*
+===============================================
+================= Upload CV ================
+===============================================
+*/
+function upload_cv($user_id,$personal_image_path,$cv_file_path){
+    global $con;
+    $stmt = $con->prepare('INSERT INTO hiring(user_id,personal_image,cv) VALUE(?,?,?)');
+    $stmt->execute(array($user_id,$personal_image_path,$cv_file_path));
+    echo "
+    <script>
+        toastr.success('تم بنجاح :- تم رفع الملفات بنجاح')
+    </script>";
+    header("Refresh:3;url=all_cvs.php"); 
+}
+
+
+/*
+===============================================
+================= get all cvs ================
+===============================================
+*/
+
+function get_all_cvs(){
+    global $con;
+    $stmt = $con->prepare('SELECT hiring.*,users.*,hiring.id AS hiring_id,users.id AS user_id
+    FROM hiring
+    INNER JOIN users
+    ON users.id = hiring.user_id
+    ');
+    $stmt->execute();
+    $data = $stmt->fetchAll();
+    return $data;
 }
